@@ -1,0 +1,18 @@
+@import url('https://fonts.googleapis.com/css2?family=Dosis:wght@200&family=Josefin+Sans:wght@200&display=swap');
+body{
+    margin: 0;
+}
+
+canvas{
+    display: block;
+    height: 100%;
+    width: 100%;
+}
+
+h2{
+    /* font-family: 'Dosis', sans-serif; */
+    font-family: 'Josefin Sans', sans-serif;
+    background-color: rgba(0,0,0,0.2);
+    letter-spacing: 2px;
+    padding: 10px 10px;
+}
