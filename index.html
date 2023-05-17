@@ -15,7 +15,9 @@
     <script src="https://cdn.jsdelivr.net/npm/three@0.141.0/examples/js/loaders/FBXLoader.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.141.0/examples/js/libs/fflate.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
-
+    <div id="blackOverlay">
+      <h1>Interactive Map</h1>
+    </div>
     <!-- <script src="main.js" type="module"> </script> -->
     <h2
       style="
@@ -28,202 +30,159 @@
     >
       PRESS SPACEBAR TO RESET VIEW
     </h2>
+    <div class="tooltip" style="z-index: 1000">
+      This is a sphere
+      <p><button style="background-color: red">CLICK ME PLEASE</button></p>
+    </div>
     <audio id="myAudio" src="./media/wind.mp3" autoplay loop></audio>
     <script>
-      var scene = new THREE.Scene();
-      var camera = new THREE.PerspectiveCamera(
-        50,
-        window.innerWidth / window.innerHeight,
-        0.2,
-        1000
-      );
-      let renderer = new THREE.WebGLRenderer();
-      renderer.setSize(window.innerWidth, window.innerHeight);
-      document.body.appendChild(renderer.domElement);
-      //   renderer.setClearColor("#e5e5e5");
-      let mainPosition = {
-        x: 1,
-        y: 30,
-        z: 30,
-      };
-      camera.position.set(mainPosition.x, mainPosition.y, mainPosition.z);
-      // camera.position.x = 1;
-      // camera.position.y = 20;
-      // camera.position.z = 30;
-      camera.rotation.x = -0.7;
-      //   camera.lookAt(0,0,0);
+      let overlayRemoved = false;
 
-      const textureLoader = new THREE.CubeTextureLoader();
-      const texture = textureLoader.load([
-        "./media/sky.jpg",
-        "./media/sky.jpg",
-        "./media/sky.jpg",
-        "./media/sky.jpg",
-        "./media/sky.jpg",
-        "./media/sky.jpg",
-      ]);
+      setTimeout(function () {
+        document.getElementById("blackOverlay").style.opacity = 0;
+        document.getElementById("blackOverlay").style.pointerEvents = "none";
+        overlayRemoved = true;
+        initializeThreeJS();
+      }, 3000);
 
-      scene.background = texture;
+      // const raycaster = new THREE.Raycaster(); // Define raycaster variable here
 
-      //   //circle1
-      //   const geometry = new THREE.SphereGeometry(1, 10, 10);
-      //   var material = new THREE.MeshLambertMaterial({ color: 0xffcc00 });
-      //   let circle1 = new THREE.Mesh(geometry, material);
-      //   scene.add(circle1);
-      //   circle1.position.set(-10,1,0);
+      function initializeThreeJS() {
+        function createTooltip(title) {
+          const tooltip = document.createElement("div");
+          tooltip.classList.add("tooltip");
+          tooltip.textContent = title;
 
-      //   let circle2 = new THREE.Mesh(geometry, material);
-      //   scene.add(circle2);
-      //   circle2.position.set(10, 1, -9);
+          const button = document.createElement("button");
+          button.style.backgroundColor = "red";
+          button.textContent = "CLICK ME PLEASE";
 
-      //   let circle3 = new THREE.Mesh(geometry, material);
-      //   scene.add(circle3);
-      //   circle3.position.set(2, 1, 8);
+          const paragraph = document.createElement("p");
+          paragraph.appendChild(button);
+          tooltip.appendChild(paragraph);
 
-      // const gridHelper = new THREE.GridHelper(20, 20);
-      // scene.add(gridHelper);
+          // Event listener for the button
+          button.addEventListener("click", function () {
+            const overlay = document.createElement("div");
+            overlay.classList.add("overlay");
+            document.body.appendChild(overlay);
 
-      const gridSize = 20; // The size of the grid
-      const sphereRadius = 0.5; // The radius of each sphere
+            const modal = document.createElement("div");
+            modal.classList.add("modal");
+            overlay.appendChild(modal);
 
-      for (let x = 0; x < gridSize; x++) {
-        for (let y = 0; y < gridSize; y++) {
-          const sphereGeometry = new THREE.SphereGeometry(sphereRadius, 32, 32);
-          const sphereMaterial = new THREE.MeshBasicMaterial({
-            color: 0xff0000,
-          }); // Initial color
-          const sphereMesh = new THREE.Mesh(sphereGeometry, sphereMaterial);
+            // Add your content to the modal
+            const modalContent = document.createElement("div");
+            modalContent.textContent = "This is the modal content";
+            modal.appendChild(modalContent);
 
-          // Position the spheres in a grid pattern
-          sphereMesh.position.x = x - gridSize / 2 + 0.5;
-          sphereMesh.position.z = y - gridSize / 2 + 0.5;
-
-          scene.add(sphereMesh);
-        }
-      }
-
-      const lightA = new THREE.AmbientLight(0x404040); // soft white light
-      scene.add(lightA);
-
-      var light = new THREE.PointLight(0xffffff, 1, 500);
-      light.position.set(10, 0, 25);
-      scene.add(light);
-
-      //panToObject
-      const panToObject = (cam, objPos) => {};
-      //Raycaster
-      const raycaster = new THREE.Raycaster();
-      const mouse = new THREE.Vector2();
-
-      function onKeyDown(event) {
-        if (event.code === "Space") {
-          // Reset camera position to default
-          gsap.to(camera.position, {
-            duration: 1,
-            x: mainPosition.x,
-            y: mainPosition.y,
-            z: mainPosition.z,
-            ease: "power2.inOut",
+            // Event listener to close the modal and remove the overlay
+            overlay.addEventListener("click", function () {
+              document.body.removeChild(overlay);
+            });
           });
+
+          return tooltip;
         }
-      }
+        var scene = new THREE.Scene();
+        var camera = new THREE.PerspectiveCamera(
+          50,
+          window.innerWidth / window.innerHeight,
+          0.2,
+          1000
+        );
+        let mainPosition = {
+          x: 1,
+          y: 30,
+          z: 30,
+        };
+        camera.position.set(mainPosition.x, mainPosition.y, mainPosition.z);
+        camera.rotation.x = -0.7;
 
-      function onMouseMove(event) {
-        // Calculate normalized device coordinates
-        mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-        mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-      }
-
-      function onClick() {
-        if (intersects.length > 0) {
-          const intersectedSphere = intersects[0].object;
-          const spherePosition = intersectedSphere.position;
-          console.log(
-            `Clicked sphere coordinates: (${spherePosition.x}, ${
-              spherePosition.z * -1
-            })`
-          );
-          gsap.to(camera.position, {
-            duration: 1,
-            x: spherePosition.x,
-            y: spherePosition.y + 5,
-            z: spherePosition.z + 5,
-            ease: "power2.inOut",
-          });
-        } else {
-          // Clicked on a non-intersecting object, return camera to default position
-          gsap.to(camera.position, {
-            duration: 1,
-            x: mainPosition.x,
-            y: mainPosition.y,
-            z: mainPosition.z,
-            ease: "power2.inOut",
-          });
-        }
-      }
-
-      window.addEventListener("mousemove", onMouseMove, false);
-      window.addEventListener("click", onClick, false);
-      window.addEventListener("keydown", onKeyDown, false);
-
-      let loader = new THREE.GLTFLoader();
-      let obj;
-      const excludeObjects = []; // Array to hold objects to be excluded from raycasting
-
-      loader.load(
-        "media/old_map_3d_model/old_map_3d_model.glb",
-        function (gltf) {
-          obj = gltf.scene;
-
-          // Set the desired scale factor
-          let scaleFactor = 10; // Increase the scale by 2 times
-
-          // Apply the scale to the object
-          obj.scale.set(scaleFactor, scaleFactor, scaleFactor);
-
-          scene.add(obj);
-          excludeObjects.push(obj); // Add the object to the raycastObjects array
-        },
-        function (xhr) {
-          console.log((xhr.loaded / xhr.total) * 100 + "% loaded");
-          console.log("Model loaded successfully!");
-        },
-        function (error) {
-          console.log("An error occurred:", error);
-        }
-      );
-
-      window.addEventListener("resize", () => {
+        let renderer = new THREE.WebGLRenderer();
         renderer.setSize(window.innerWidth, window.innerHeight);
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
-      });
+        document.body.appendChild(renderer.domElement);
+        //   renderer.setClearColor("#e5e5e5");
 
-      function initialAnimation() {
-        const target = new THREE.Vector3(0, 0, 0); // Target position (center of the grid)
-        const radius = 30; // Radius of the circular path
-        const duration = 3; // Animation duration in seconds
-        const angleIncrement = Math.PI / 2 / (60 * duration); // Angle increment for each frame
+        const textureLoader = new THREE.CubeTextureLoader();
+        const texture = textureLoader.load([
+          "./media/sky.jpg",
+          "./media/sky.jpg",
+          "./media/sky.jpg",
+          "./media/sky.jpg",
+          "./media/sky.jpg",
+          "./media/sky.jpg",
+        ]);
 
-        let angle = Math.PI / 2; // Start at the final quarter of the circular motion
+        scene.background = texture;
 
-        function animateCamera() {
-          const x = target.x + radius * Math.sin(angle);
-          const z = target.z + radius * Math.cos(angle);
+        //   //circle1
+        //   const geometry = new THREE.SphereGeometry(1, 10, 10);
+        //   var material = new THREE.MeshLambertMaterial({ color: 0xffcc00 });
+        //   let circle1 = new THREE.Mesh(geometry, material);
+        //   scene.add(circle1);
+        //   circle1.position.set(-10,1,0);
 
-          camera.position.set(x, camera.position.y, z);
-          camera.lookAt(target);
+        //   let circle2 = new THREE.Mesh(geometry, material);
+        //   scene.add(circle2);
+        //   circle2.position.set(10, 1, -9);
 
-          angle -= angleIncrement; // Decrease the angle
+        //   let circle3 = new THREE.Mesh(geometry, material);
+        //   scene.add(circle3);
+        //   circle3.position.set(2, 1, 8);
 
-          if (angle >= 0) {
-            requestAnimationFrame(animateCamera);
-          } else {
-            // Lock camera position to the default position
-            // camera.position.set(target.x, camera.position.y, target.z + 20);
-            // camera.lookAt(target);
+        // const gridHelper = new THREE.GridHelper(20, 20);
+        // scene.add(gridHelper);
 
-            // Smooth transition to the default position and rotation
+        const gridSize = 20; // The size of the grid
+        const sphereRadius = 0.5; // The radius of each sphere
+        const clickablePoints = [];
+        for (let x = 0; x < gridSize; x++) {
+          for (let y = 0; y < gridSize; y++) {
+            // Exclude spheres that are not at the corners
+            if (
+              !(
+                (x === 0 || x === gridSize - 1) &&
+                (y === 0 || y === gridSize - 1)
+              )
+            ) {
+              continue;
+            }
+
+            const sphereGeometry = new THREE.SphereGeometry(
+              sphereRadius,
+              32,
+              32
+            );
+            const sphereMaterial = new THREE.MeshBasicMaterial({
+              color: 0xff0000,
+            });
+            const sphereMesh = new THREE.Mesh(sphereGeometry, sphereMaterial);
+
+            sphereMesh.position.x = x - gridSize / 2 + 0.5;
+            sphereMesh.position.z = y - gridSize / 2 + 0.5;
+
+            scene.add(sphereMesh);
+            clickablePoints.push(sphereMesh);
+          }
+        }
+
+        const lightA = new THREE.AmbientLight(0x404040); // soft white light
+        scene.add(lightA);
+
+        var light = new THREE.PointLight(0xffffff, 4, 500);
+        light.position.set(10, 0, 25);
+        scene.add(light);
+
+        //panToObject
+        const panToObject = (cam, objPos) => {};
+        //Raycaster
+        const raycaster = new THREE.Raycaster();
+        const mouse = new THREE.Vector2();
+
+        function onKeyDown(event) {
+          if (event.code === "Space") {
+            // Reset camera position to default
             gsap.to(camera.position, {
               duration: 1,
               x: mainPosition.x,
@@ -231,54 +190,194 @@
               z: mainPosition.z,
               ease: "power2.inOut",
             });
-            gsap.to(camera.rotation, {
+          }
+        }
+
+        // Declare variables for the tooltip element and the currently hovered sphere
+        const tooltipElement = document.querySelector(".tooltip");
+        let hoveredSphere = null;
+
+        // Modify the onMouseMove function
+        function onMouseMove(event) {
+          mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+          mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+          raycaster.setFromCamera(mouse, camera);
+          const intersects = raycaster.intersectObjects(clickablePoints);
+
+          if (intersects.length > 0) {
+            const intersectedSphere = intersects[0].object;
+
+            if (hoveredSphere !== intersectedSphere) {
+              hoveredSphere = intersectedSphere;
+
+              // Calculate the position of the tooltip in screen coordinates
+              const screenPosition = new THREE.Vector3();
+              screenPosition.copy(intersectedSphere.position);
+              screenPosition.project(camera);
+
+              // Convert the screen coordinates to CSS coordinates
+              const x = ((screenPosition.x + 1) / 2) * window.innerWidth;
+              const y = ((-screenPosition.y + 1) / 2) * window.innerHeight;
+
+              // Position and show the tooltip
+              tooltipElement.style.left = `${x}px`;
+              tooltipElement.style.top = `${y}px`;
+              tooltipElement.classList.add("show");
+            }
+          } else {
+            // No sphere is hovered, hide the tooltip
+            tooltipElement.classList.remove("show");
+            hoveredSphere = null;
+          }
+        }
+
+        function onClick() {
+          if (intersects.length > 0) {
+            const intersectedSphere = intersects[0].object;
+            const spherePosition = intersectedSphere.position;
+            console.log(
+              `Clicked sphere coordinates: (${spherePosition.x}, ${
+                spherePosition.z * -1
+              })`
+            );
+            gsap.to(camera.position, {
               duration: 1,
-              x: -0.7,
-              y: 0,
-              z: 0,
+              x: spherePosition.x,
+              y: spherePosition.y + 5,
+              z: spherePosition.z + 5,
+              ease: "power2.inOut",
+            });
+          } else {
+            // Clicked on a non-intersecting object, return camera to default position
+            gsap.to(camera.position, {
+              duration: 1,
+              x: mainPosition.x,
+              y: mainPosition.y,
+              z: mainPosition.z,
               ease: "power2.inOut",
             });
           }
         }
 
-        animateCamera();
-      }
-      window.addEventListener("load", function () {
-        initialAnimation();
-      });
+        window.addEventListener("mousemove", onMouseMove, false);
+        window.addEventListener("click", onClick, false);
+        window.addEventListener("keydown", onKeyDown, false);
 
-      const animate = () => {
-        requestAnimationFrame(animate);
+        let loader = new THREE.GLTFLoader();
+        let obj;
+        const excludeObjects = []; // Array to hold objects to be excluded from raycasting
 
-        // Update the picking ray with the camera and mouse position
-        raycaster.setFromCamera(mouse, camera);
+        loader.load(
+          "media/old_map_3d_model/old_map_3d_model.glb",
+          function (gltf) {
+            obj = gltf.scene;
 
-        // Calculate intersections
-        intersects = raycaster.intersectObjects(
-          scene.children.filter((obj) => !excludeObjects.includes(obj))
+            // Set the desired scale factor
+            let scaleFactor = 10; // Increase the scale by 2 times
+
+            // Apply the scale to the object
+            obj.scale.set(scaleFactor, scaleFactor, scaleFactor);
+
+            scene.add(obj);
+            excludeObjects.push(obj); // Add the object to the raycastObjects array
+
+            initialAnimation(camera);
+          },
+          function (xhr) {
+            console.log((xhr.loaded / xhr.total) * 100 + "% loaded");
+            console.log("Model loaded successfully!");
+          },
+          function (error) {
+            console.log("An error occurred:", error);
+          }
         );
 
-        // console.log(excludeObjects);
-
-        // Reset colors of all spheres
-        scene.traverse((object) => {
-          if (object instanceof THREE.Mesh) {
-            // console.log(object.parent);
-            if(object.parent.isObject3D){
-              object.material.color.set(0xff0000); // Reset to initial color
-            }
-          }
+        window.addEventListener("resize", () => {
+          renderer.setSize(window.innerWidth, window.innerHeight);
+          camera.aspect = window.innerWidth / window.innerHeight;
+          camera.updateProjectionMatrix();
         });
 
-        // Change color of the sphere being hovered over
-        if (intersects.length > 0) {
-          const intersectedSphere = intersects[0].object;
-          intersectedSphere.material.color.set(0x00ff00); // Set to a different color
+        function initialAnimation(camera) {
+          const target = new THREE.Vector3(0, 0, 0); // Target position (center of the grid)
+          const radius = 30; // Radius of the circular path
+          const duration = 3; // Animation duration in seconds
+          const angleIncrement = Math.PI / 2 / (60 * duration); // Angle increment for each frame
+
+          let angle = Math.PI / 2; // Start at the final quarter of the circular motion
+
+          function animateCamera() {
+            const x = target.x + radius * Math.sin(angle);
+            const z = target.z + radius * Math.cos(angle);
+
+            camera.position.set(x, camera.position.y, z);
+            camera.lookAt(target);
+
+            angle -= angleIncrement; // Decrease the angle
+
+            if (angle >= 0) {
+              requestAnimationFrame(animateCamera);
+            } else {
+              // Lock camera position to the default position
+              // camera.position.set(target.x, camera.position.y, target.z + 20);
+              // camera.lookAt(target);
+
+              // Smooth transition to the default position and rotation
+              gsap.to(camera.position, {
+                duration: 1,
+                x: mainPosition.x,
+                y: mainPosition.y,
+                z: mainPosition.z,
+                ease: "power2.inOut",
+              });
+              gsap.to(camera.rotation, {
+                duration: 1,
+                x: -0.7,
+                y: 0,
+                z: 0,
+                ease: "power2.inOut",
+              });
+            }
+          }
+          animateCamera();
         }
 
-        renderer.render(scene, camera);
-      };
-      animate();
+        const animate = () => {
+          requestAnimationFrame(animate);
+
+          // Update the picking ray with the camera and mouse position
+          raycaster.setFromCamera(mouse, camera);
+
+          // Calculate intersections
+          intersects = raycaster.intersectObjects(
+            scene.children.filter((obj) => !excludeObjects.includes(obj))
+          );
+
+          // console.log(excludeObjects);
+
+          // Reset colors of all spheres
+          scene.traverse((object) => {
+            if (object instanceof THREE.Mesh) {
+              // console.log(object.parent);
+              if (clickablePoints.includes(object)) {
+                object.material.color.set(0xff0000); // Reset to initial color
+              }
+            }
+          });
+
+          // Change color of the sphere being hovered over
+          if (intersects.length > 0) {
+            const intersectedSphere = intersects[0].object;
+            intersectedSphere.material.color.set(0x00ff00); // Set to a different color
+          }
+
+          renderer.render(scene, camera);
+        };
+
+        animate();
+      }
+      // let mouse = new THREE.Vector2();
     </script>
   </body>
 </html>
