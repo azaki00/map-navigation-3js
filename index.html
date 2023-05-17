@@ -43,42 +43,7 @@
       // const raycaster = new THREE.Raycaster(); // Define raycaster variable here
 
       function initializeThreeJS() {
-        function createTooltip(title) {
-          const tooltip = document.createElement("div");
-          tooltip.classList.add("tooltip");
-          tooltip.textContent = title;
 
-          const button = document.createElement("button");
-          button.style.backgroundColor = "red";
-          button.textContent = "CLICK ME PLEASE";
-
-          const paragraph = document.createElement("p");
-          paragraph.appendChild(button);
-          tooltip.appendChild(paragraph);
-
-          // Event listener for the button
-          button.addEventListener("click", function () {
-            const overlay = document.createElement("div");
-            overlay.classList.add("overlay");
-            document.body.appendChild(overlay);
-
-            const modal = document.createElement("div");
-            modal.classList.add("modal");
-            overlay.appendChild(modal);
-
-            // Add your content to the modal
-            const modalContent = document.createElement("div");
-            modalContent.textContent = "This is the modal content";
-            modal.appendChild(modalContent);
-
-            // Event listener to close the modal and remove the overlay
-            overlay.addEventListener("click", function () {
-              document.body.removeChild(overlay);
-            });
-          });
-
-          return tooltip;
-        }
         var scene = new THREE.Scene();
         var camera = new THREE.PerspectiveCamera(
           50,
@@ -199,16 +164,16 @@
           console.log("mouseX:" + mouseMoveX + " | mouseY:" + mouseMoveY);
 
           // Calculate the camera movement based on the mouse movement
-          cameraOffsetX += mouseMoveX * 0.01;
-          cameraOffsetY += mouseMoveY * 0.01;
+          cameraOffsetX += mouseMoveX * 0.006;
+          cameraOffsetY += mouseMoveY * 0.006;
           // console.log(cameraOffsetX + " | "+ cameraOffsetY);
           camera.position.set(camera.position.x + cameraOffsetX*0.01, camera.position.y - cameraOffsetY*0.01, camera.position.z);
           // camera.position.Y = cameraOffsetY;
 
 
           // Apply the camera movement to the camera's rotation
-          // camera.rotation.x += cameraOffsetY;
-          // camera.rotation.y += cameraOffsetX;
+          // camera.rotation.x += cameraOffsetY*0.0005;
+          // camera.rotation.y += cameraOffsetX*0.0005;
 
           // Dampen the camera movement gradually
           cameraOffsetX *= 0.9;
@@ -289,7 +254,7 @@
             obj = gltf.scene;
 
             // Set the desired scale factor
-            let scaleFactor = 10; // Increase the scale by 2 times
+            let scaleFactor = 10;
 
             // Apply the scale to the object
             obj.scale.set(scaleFactor, scaleFactor, scaleFactor);
@@ -392,7 +357,7 @@
 
         animate();
       }
-      // let mouse = new THREE.Vector2();
+
     </script>
   </body>
 </html>
