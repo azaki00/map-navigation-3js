@@ -1,62 +1,106 @@
-@import url('https://fonts.googleapis.com/css2?family=Dosis:wght@200&family=Josefin+Sans:wght@200&display=swap');
-body{
-    margin: 0;
+@import url("https://fonts.googleapis.com/css2?family=Dosis:wght@200&family=Josefin+Sans:wght@200&display=swap");
+html{
+    overflow: hidden;
+}
+body {
+  margin: 0;
+  padding: 0;
 }
 
-canvas{
-    display: block;
-    height: 100%;
-    width: 100%;
+canvas {
+  display: block;
+  height: 100%;
+  width: 100%;
+  padding: 0;
+  margin: 0;
 }
 
-h2{
-    /* font-family: 'Dosis', sans-serif; */
-    font-family: 'Josefin Sans', sans-serif;
-    background-color: rgba(0,0,0,0.2);
-    letter-spacing: 2px;
-    padding: 10px 10px;
+.headControl {
+  letter-spacing: 2px;
+  font-weight: bold;
+  position: absolute;
+  top: 0;
+  width: 100%;
+  margin: 0;
+}
+.par {
+  font-family: "Josefin Sans", sans-serif;
+  background-color: rgba(0, 0, 0, 0.2);
+  color: #fff;
+  padding: 5px 5px;
+  width: 100%;
+  text-align: center;
+  z-index: 1000;
+  margin: 0;
+}
+
+h2 {
+    font-size: 2em;
+  font-family: "Dosis", sans-serif;
+  background-color: rgba(255, 255, 255, 0.2);
+  width: 100%;
+  text-align: center;
+  z-index: 1000;
+  margin: 0;
+  padding: 5px 5px;
 }
 
 .tooltip {
-    position: absolute;
-    background-color: white;
-    color: black;
-    padding: 8px;
-    border-radius: 4px;
-    font-family: Arial, sans-serif;
-    font-size: 14px;
-    pointer-events: none;
-    visibility: hidden;
-    opacity: 0;
-    transition: opacity 0.4s ease;
-    white-space: nowrap;
-    transform: translate(-50%, -100%); /* Position the tooltip above the sphere */
+  position: absolute;
+  background-color: white;
+  color: black;
+  padding: 8px;
+  border-radius: 4px;
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  pointer-events: none;
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  white-space: nowrap;
+  transform: translate(-50%, -100%); /* Position the tooltip above the sphere */
+}
 
-  }
+.tooltip.show {
+  visibility: visible;
+  opacity: 1;
+  transition: opacity 0.4s ease;
+}
 
-  .tooltip.show {
-    visibility: visible;
-    opacity: 1;
-    transition: opacity 0.4s ease;
-  }
-
-  #blackOverlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: #000;
-    z-index: 9999; /* Ensure the overlay appears on top of other elements */
-    opacity: 1; /* Initially set the opacity to fully opaque */
-    transition: opacity 1s ease; /* Apply a transition effect to opacity */
-    display: flex;
+#blackOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #000;
+  z-index: 9999; /* Ensure the overlay appears on top of other elements */
+  opacity: 1; /* Initially set the opacity to fully opaque */
+  transition: opacity 1s ease; /* Apply a transition effect to opacity */
+  display: flex;
   align-items: center;
   justify-content: center;
+}
+#blackOverlay h1 {
+  font-family: "Dosis", sans-serif;
+  text-transform: uppercase;
+  color: #fff;
+  font-size: 4em;
+}
+
+
+.blink {
+    animation: 2s linear infinite condemned_blink_effect;
   }
-  #blackOverlay h1 {
-    font-family: 'Dosis', sans-serif;
-    text-transform: uppercase;
-    color: #fff;
-    font-size: 4em;
+  
+  @keyframes condemned_blink_effect {
+    0% {
+      color: white;
+    }
+    50% {
+      color: rgba(0, 0, 0, 0.2);
+    }
+    100% {
+      color: white;
+    }
   }

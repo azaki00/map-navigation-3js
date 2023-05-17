@@ -19,17 +19,12 @@
       <h1>Interactive Map</h1>
     </div>
     <!-- <script src="main.js" type="module"> </script> -->
-    <h2
-      style="
-        color: #fff;
-        width: 100%;
-        text-align: center;
-        position: fixed;
-        z-index: 1000;
-      "
-    >
-      PRESS SPACEBAR TO RESET VIEW
-    </h2>
+    <div class="headControl">
+      <p class="par blink">PRESS SPACEBAR TO RESET VIEW</p>
+      <h2>INTERACTIVE MAP</h2>
+  </p>
+    </div>
+
     <div class="tooltip" style="z-index: 1000">
       This is a sphere
       <p><button style="background-color: red">CLICK ME PLEASE</button></p>
@@ -93,8 +88,8 @@
         );
         let mainPosition = {
           x: 1,
-          y: 30,
-          z: 30,
+          y: 18,
+          z: 22,
         };
         camera.position.set(mainPosition.x, mainPosition.y, mainPosition.z);
         camera.rotation.x = -0.7;
@@ -115,21 +110,6 @@
         ]);
 
         scene.background = texture;
-
-        //   //circle1
-        //   const geometry = new THREE.SphereGeometry(1, 10, 10);
-        //   var material = new THREE.MeshLambertMaterial({ color: 0xffcc00 });
-        //   let circle1 = new THREE.Mesh(geometry, material);
-        //   scene.add(circle1);
-        //   circle1.position.set(-10,1,0);
-
-        //   let circle2 = new THREE.Mesh(geometry, material);
-        //   scene.add(circle2);
-        //   circle2.position.set(10, 1, -9);
-
-        //   let circle3 = new THREE.Mesh(geometry, material);
-        //   scene.add(circle3);
-        //   circle3.position.set(2, 1, 8);
 
         // const gridHelper = new THREE.GridHelper(20, 20);
         // scene.add(gridHelper);
@@ -197,8 +177,43 @@
         const tooltipElement = document.querySelector(".tooltip");
         let hoveredSphere = null;
 
+        // Declare variables to store the initial mouse position
+        let initialMouseX = 0;
+        let initialMouseY = 0;
+
+        // Declare variables to control camera movement
+        let cameraOffsetX = 0;
+        let cameraOffsetY = 0;
+
         // Modify the onMouseMove function
         function onMouseMove(event) {
+          // Calculate the mouse movement from the initial position
+          const mouseX = event.clientX;
+          const mouseY = event.clientY;
+          const mouseMoveX = mouseX - initialMouseX;
+          const mouseMoveY = mouseY - initialMouseY;
+
+          // Update the initial mouse position
+          initialMouseX = mouseX;
+          initialMouseY = mouseY;
+          console.log("mouseX:" + mouseMoveX + " | mouseY:" + mouseMoveY);
+
+          // Calculate the camera movement based on the mouse movement
+          cameraOffsetX += mouseMoveX * 0.01;
+          cameraOffsetY += mouseMoveY * 0.01;
+          // console.log(cameraOffsetX + " | "+ cameraOffsetY);
+          camera.position.set(camera.position.x + cameraOffsetX*0.01, camera.position.y - cameraOffsetY*0.01, camera.position.z);
+          // camera.position.Y = cameraOffsetY;
+
+
+          // Apply the camera movement to the camera's rotation
+          // camera.rotation.x += cameraOffsetY;
+          // camera.rotation.y += cameraOffsetX;
+
+          // Dampen the camera movement gradually
+          cameraOffsetX *= 0.9;
+          cameraOffsetY *= 0.9;
+
           mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
           mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
