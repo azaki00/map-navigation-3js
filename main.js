@@ -12,7 +12,7 @@ setTimeout(function () {
 // const raycaster = new THREE.Raycaster(); // Define raycaster variable here
 
 function initializeThreeJS() {
-
+    
     var scene = new THREE.Scene();
     var camera = new THREE.PerspectiveCamera(
         50,
@@ -51,6 +51,7 @@ function initializeThreeJS() {
     const gridSize = 20; // The size of the grid
     const sphereRadius = 0.5; // The radius of each sphere
     const clickablePoints = [];
+    let counterK = 0;
     for (let x = 0; x < gridSize; x++) {
         for (let y = 0; y < gridSize; y++) {
             // Exclude spheres that are not at the corners
@@ -80,6 +81,43 @@ function initializeThreeJS() {
             clickablePoints.push(sphereMesh);
         }
     }
+    const modal1 = document.getElementById("modal1");
+const modal2 = document.getElementById("modal2");
+const modal3 = document.getElementById("modal3");
+const modal4 = document.getElementById("modal4");
+
+const sphere1 = clickablePoints[0];
+const sphere2 = clickablePoints[1];
+const sphere3 = clickablePoints[2];
+const sphere4 = clickablePoints[3];
+
+sphere1.addEventListener("click", () => {
+    console.log("hello1");
+  modal1.style.display = "block";
+});
+
+sphere2.addEventListener("click", () => {
+  modal2.style.display = "block";
+});
+
+sphere3.addEventListener("click", () => {
+  modal3.style.display = "block";
+});
+
+sphere4.addEventListener("click", () => {
+  modal4.style.display = "block";
+});
+
+// Close modal event listeners
+const closeButtons = document.getElementsByClassName("close-modal");
+Array.from(closeButtons).forEach((button) => {
+  button.addEventListener("click", () => {
+    modal1.style.display = "none";
+    modal2.style.display = "none";
+    modal3.style.display = "none";
+    modal4.style.display = "none";
+  });
+});0222222222222222222222222222222222222222222222222222222222222
 
     const lightA = new THREE.AmbientLight(0x404040); // soft white light
     scene.add(lightA);
